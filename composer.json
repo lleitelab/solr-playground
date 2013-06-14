@@ -1,0 +1,10 @@
+{
+    "name": "InFog/solr-playground",
+    "description": "Just playin around with Apache Solr and PHP Solarium",
+    "autoload": {
+        "psr-0": {"": "src/"}
+    },
+    "require": {
+        "solarium/solarium": "3.1.*"
+    }
+}
