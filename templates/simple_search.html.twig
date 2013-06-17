@@ -1,0 +1,15 @@
+<h1>Simple Search</h1>
+
+<p>Found documents: {{ result.getNumFound }} </p>
+
+{% for document in result %}
+    <hr />
+    <table>
+        {% for field, value in document %}
+            <tr>
+                <th>{{ field }}</th>
+                <td>{{ value|join(', ') }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endfor %}

@@ -1,10 +1,48 @@
-<h1>Solarium Examples</h1>
+<?php
 
-<ul>
-    <li>
-        <a href="/ping.php">Solariuim version and ping</a>
-    </li>
-    <li>
-        <a href="/simple_search.php">Simple search</a>
-    </li>
-</ul>
+include __DIR__ . "/../vendor/autoload.php";
+
+
+$slimConfig = include __DIR__ . "/../protected/slim_config.php";
+$twigConfig = include __DIR__ . "/../protected/twig_config.php";
+$solariumConfig = include __DIR__ . "/../protected/solarium_config.php";
+
+$app = new \Slim\Slim($slimConfig);
+
+\Slim\Extras\Views\Twig::$twigOptions = $twigConfig;
+
+$app->view(new \Slim\Extras\Views\Twig());
+
+$app->get('/', function () use ($app) {
+    $app->render('index.html.twig');
+});
+
+$client = new Solarium\Client($solariumConfig);
+
+$app->get('/ping', function () use ($app, $client) {
+    $data = array();
+
+    $ping = $client->createPing();
+    $data['solariumVersion'] = Solarium\Client::VERSION;
+
+    try {
+        $result = $client->ping($ping);
+        $data['success'] = true;
+        $data['result'] = $result->getData();
+    } catch (Solarium\Exception $e) {
+        $data['success'] = false;
+    }
+
+    $app->render('ping.html.twig', $data);
+});
+
+$app->get('/simple_search', function () use ($app, $client) {
+    $data = array();
+
+    $query = $client->createQuery($client::QUERY_SELECT);
+    $data['result'] = $client->execute($query);
+
+    $app->render('simple_search.html.twig', $data);
+});
+
+$app->run();
