@@ -19,6 +19,9 @@ $app->get('/', function () use ($app) {
 
 $client = new Solarium\Client($solariumConfig);
 
+/**
+ * Ping
+ */
 $app->get('/ping', function () use ($app, $client) {
     $data = array();
 
@@ -36,6 +39,9 @@ $app->get('/ping', function () use ($app, $client) {
     $app->render('ping.html.twig', $data);
 });
 
+/**
+ * Simple search
+ */
 $app->get('/simple_search', function () use ($app, $client) {
     $data = array();
 
@@ -43,6 +49,18 @@ $app->get('/simple_search', function () use ($app, $client) {
     $data['result'] = $client->execute($query);
 
     $app->render('simple_search.html.twig', $data);
+});
+
+$app->get('/facet_field', function () use ($app, $client) {
+    $data = array();
+    $query = $client->createSelect();
+    $facetSet = $query->getFacetSet();
+    $facetSet->createFacetField('stock')->setField('inStock');
+
+    $data['resultSet'] = $client->select($query);
+    $data['facets'] = $data['resultSet']->getFacetSet()->getFacet('stock');
+
+    $app->render('facet_field.html.twig', $data);
 });
 
 $app->run();
