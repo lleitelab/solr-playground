@@ -17,3 +17,12 @@ nav > ul > li {
 article {
     margin-left: 300px;
 }
+
+fieldset > label {
+    display: block;
+    padding: 0 0 20px 0;
+}
+
+fieldset > label > input {
+    display: block;
+}

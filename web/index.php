@@ -9,9 +9,7 @@ $solariumConfig = include __DIR__ . "/../protected/solarium_config.php";
 
 $app = new \Slim\Slim($slimConfig);
 
-\Slim\Extras\Views\Twig::$twigOptions = $twigConfig;
-
-$app->view(new \Slim\Extras\Views\Twig());
+$app->view()->parserOptions = $twigConfig;
 
 $app->get('/', function () use ($app) {
     $app->render('main.html.twig');
@@ -51,6 +49,9 @@ $app->get('/simple_search', function () use ($app, $client) {
     $app->render('simple_search.html.twig', $data);
 });
 
+/**
+ * Facets example
+ */
 $app->get('/facet_field', function () use ($app, $client) {
     $data = array();
     $query = $client->createSelect();
@@ -64,4 +65,30 @@ $app->get('/facet_field', function () use ($app, $client) {
     $app->render('facet_field.html.twig', $data);
 });
 
+/**
+ * Adding documents
+ */
+$app->get('/add', function () use ($app) {
+    $app->render('add/form.html.twig');
+});
+$app->post('/add', function() use ($app, $client) {
+    $updateQuery = $client->createUpdate();
+
+    $document = $updateQuery->createDocument();
+    $document->id = $app->request->post('field_id');
+    $document->name = $app->request->post('field_name');
+    $document->cat = explode(',', $app->request->post('field_categories'));
+    $document->price = (float) $app->request->post('field_price');
+
+    $updateQuery->addDocument($document);
+    $updateQuery->addCommit();
+
+    $client->update($updateQuery);
+
+    $app->render('add/success.html.twig', array());
+});
+
+/**
+ * Running the app
+ */
 $app->run();

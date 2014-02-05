@@ -9,6 +9,7 @@
         "solarium/solarium": "3.1.*",
         "slim/slim": "2.*",
         "slim/extras": "2.*",
+        "slim/views": "dev-master",
         "twig/twig": "1.*"
     }
 }
