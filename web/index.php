@@ -14,7 +14,7 @@ $app = new \Slim\Slim($slimConfig);
 $app->view(new \Slim\Extras\Views\Twig());
 
 $app->get('/', function () use ($app) {
-    $app->render('index.html.twig');
+    $app->render('main.html.twig');
 });
 
 $client = new Solarium\Client($solariumConfig);
@@ -56,6 +56,7 @@ $app->get('/facet_field', function () use ($app, $client) {
     $query = $client->createSelect();
     $facetSet = $query->getFacetSet();
     $facetSet->createFacetField('stock')->setField('inStock');
+    $facetSet->createFacetField('category')->setField('cat');
 
     $data['resultSet'] = $client->select($query);
     $data['facets'] = $data['resultSet']->getFacetSet()->getFacet('stock');

@@ -1,15 +1,19 @@
-<h1>Simple Search</h1>
+{% extends "main.html.twig" %}
 
-<p>Found documents: {{ result.getNumFound }} </p>
+{% block content %}
+    <h2>Simple Search</h2>
 
-{% for document in result %}
-    <hr />
-    <table>
-        {% for field, value in document %}
-            <tr>
-                <th>{{ field }}</th>
-                <td>{{ value|join(', ') }}</td>
-            </tr>
-        {% endfor %}
-    </table>
-{% endfor %}
+    <p>Found documents: {{ result.getNumFound }} </p>
+
+    {% for document in result %}
+        <hr />
+        <table>
+            {% for field, value in document %}
+                <tr>
+                    <th>{{ field }}</th>
+                    <td>{{ value|join(', ') }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endfor %}
+{% endblock %}

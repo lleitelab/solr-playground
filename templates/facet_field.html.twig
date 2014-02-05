@@ -1,0 +1,27 @@
+{% extends "main.html.twig" %}
+
+{% block content %}
+    <h1>Facets</h1>
+
+    <h2>Items found: {{ resultSet.getNumFound }}</h2>
+
+    <h2>Facet counts for field "inStock"</h2>
+    <ul>
+        {% for facet, count in resultSet.getFacetSet.getFacet('stock') %}
+            <li>{{ facet }}: {{ count }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Facet counts for field "Category"</h2>
+    <ul>
+        {% for facet, count in resultSet.getFacetSet.getFacet('category') %}
+            <li>{{ facet }}: {{ count }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Documents</h2>
+
+    {% for document in resultSet %}
+        <p>Name: {{ document.name }}</p>
+    {% endfor %}
+{% endblock %}
