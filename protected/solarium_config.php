@@ -1,6 +1,6 @@
 <?php
 
-return $config = array(
+return array(
     'endpoint' => array(
         'localhost' => array(
             'host' => '127.0.0.1',
