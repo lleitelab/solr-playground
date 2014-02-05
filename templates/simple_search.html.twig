@@ -3,6 +3,16 @@
 {% block content %}
     <h2>Simple Search</h2>
 
+    <form method="GET">
+        <fieldset>
+            <legend>Search</legend>
+            <label for="field_query">
+                Query: <input type="text" name="field_query" id="field_query" value="{{ q }}" />
+            </label>
+            <input type="submit" value="Submit" />
+        </fieldset>
+    </form>
+
     <p>Found documents: {{ result.getNumFound }} </p>
 
     {% for document in result %}

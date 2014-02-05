@@ -43,8 +43,16 @@ $app->get('/ping', function () use ($app, $client) {
 $app->get('/simple_search', function () use ($app, $client) {
     $data = array();
 
-    $query = $client->createQuery($client::QUERY_SELECT);
+    $query = $client->createSelect();
+
+    $q = $app->request->get('field_query');
+
+    $query->setQuery('*:*');
+    if ($q) {
+        $query->setQuery($q);
+    }
     $data['result'] = $client->execute($query);
+    $data['q'] = $q;
 
     $app->render('simple_search.html.twig', $data);
 });
