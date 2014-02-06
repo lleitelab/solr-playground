@@ -1,0 +1,18 @@
+{% extends 'main.html.twig' %}
+
+{% block content %}
+    <form method="POST" action="/document">
+        <h2>Adding a document</h2>
+        <fieldset>
+            <legend>New document</legend>
+
+            {% for field in document %}
+                <label for="{{ field.key }}">
+                    {{ field.label }}: <input type="text" name="fields[{{ field.key }}]" id="{{ field.key }}">
+                </label>
+            {% endfor %}
+        </fieldset>
+
+        <input type="submit" value="Submit" />
+    </form>
+{% endblock %}

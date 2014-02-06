@@ -17,6 +17,15 @@ $app->get('/', function () use ($app) {
 
 $client = new Solarium\Client($solariumConfig);
 
+function getDocumentDefault() {
+    return [
+                ['key' => 'id',         'label' => 'ID'],
+                ['key' => 'name',       'label' => 'Name'],
+                ['key' => 'cat',        'label' => 'Categories (Comma separated)'],
+                ['key' => 'price',      'label' => 'Price'],
+           ];
+}
+
 /**
  * Ping
  */
@@ -29,7 +38,7 @@ $app->get('/ping', function () use ($app, $client) {
     try {
         $result = $client->ping($ping);
         $data['success'] = true;
-        $data['result'] = $result->getData();
+        $data['result']  = $result->getData();
     } catch (Solarium\Exception $e) {
         $data['success'] = false;
     }
@@ -41,12 +50,12 @@ $app->get('/ping', function () use ($app, $client) {
  * Simple search
  */
 $app->get('/simple_search', function () use ($app, $client) {
-    $data = array();
+    $data  = array();
 
     $query = $client->createSelect();
 
-    $q = $app->request->get('field_query');
-    $s = $app->request->get('field_sort');
+    $q  = $app->request->get('field_query');
+    $s  = $app->request->get('field_sort');
     $st = $app->request->get('field_sort_type');
 
     $query->setQuery('*:*');
@@ -63,8 +72,8 @@ $app->get('/simple_search', function () use ($app, $client) {
         }
     }
     $data['result'] = $client->execute($query);
-    $data['q'] = $q;
-    $data['s'] = $s;
+    $data['q']  = $q;
+    $data['s']  = $s;
     $data['st'] = $st;
 
     $app->render('simple_search.html.twig', $data);
@@ -81,24 +90,45 @@ $app->get('/facet_field', function () use ($app, $client) {
     $facetSet->createFacetField('category')->setField('cat');
 
     $data['resultSet'] = $client->select($query);
-    $data['facets'] = $data['resultSet']->getFacetSet()->getFacet('stock');
+    $data['facets']    = $data['resultSet']->getFacetSet()->getFacet('stock');
 
-    $app->render('facet_field.html.twig', $data);
+    $app->render('facet_field.html.twig', ['document' => $data]);
 });
 
 /**
  * Adding documents
  */
-$app->get('/add', function () use ($app) {
-    $app->render('add/form.html.twig');
+$app->get('/document', function () use ($app) {
+    $app->render('document/form.html.twig', ['document' => getDocumentDefault()]);
 });
-$app->post('/add', function() use ($app, $client) {
-    $updateQuery = $client->createUpdate();
 
-    $document = $updateQuery->createDocument();
-    $document->id = $app->request->post('field_id');
-    $document->name = $app->request->post('field_name');
-    $document->cat = explode(',', $app->request->post('field_categories'));
+$app->post('/document', function() use ($app, $client) {
+    $updateQuery     = $client->createUpdate();
+
+    $document        = $updateQuery->createDocument();
+
+    $postDocument    = $app->request->post('fields');
+
+    $document->id    = $postDocument['id'];
+    $document->name  = $postDocument['name'];
+    $document->cat   = explode(',', $postDocument['cat']);
+    $document->price = (float) $postDocument['price'];
+
+    $updateQuery->addDocument($document);
+    $updateQuery->addCommit();
+
+    $client->update($updateQuery);
+
+    $app->render('document/success.html.twig', array());
+});
+
+$app->put('/document', function() use ($app, $client) {
+    $updateQuery     = $client->createUpdate();
+
+    $document        = $updateQuery->createDocument();
+    $document->id    = $app->request->post('field_id');
+    $document->name  = $app->request->post('field_name');
+    $document->cat   = explode(',', $app->request->post('field_categories'));
     $document->price = (float) $app->request->post('field_price');
 
     $updateQuery->addDocument($document);
@@ -106,7 +136,7 @@ $app->post('/add', function() use ($app, $client) {
 
     $client->update($updateQuery);
 
-    $app->render('add/success.html.twig', array());
+    $app->render('document/success.html.twig', array());
 });
 
 /**
