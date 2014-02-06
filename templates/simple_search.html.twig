@@ -11,6 +11,8 @@
             </label>
             <label for="field_sort">
                 Sort: <input type="text" name="field_sort" id="field_sort" value="{{ s }}" />
+                <input type="radio" name="field_sort_type" value="asc" {% if st == "asc" %}checked="checked"{% endif %}> ASC
+                <input type="radio" name="field_sort_type" value="desc" {% if st == "desc" %}checked="checked"{% endif %}> DESC
             </label>
             <input type="submit" value="Submit" />
         </fieldset>

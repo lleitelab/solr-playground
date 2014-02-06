@@ -23,6 +23,6 @@ fieldset > label {
     padding: 0 0 20px 0;
 }
 
-fieldset > label > input {
+fieldset > label > input[type=text] {
     display: block;
 }
