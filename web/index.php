@@ -46,13 +46,26 @@ $app->get('/simple_search', function () use ($app, $client) {
     $query = $client->createSelect();
 
     $q = $app->request->get('field_query');
+    $s = $app->request->get('field_sort');
+    $st = $app->request->get('field_sort_type');
 
     $query->setQuery('*:*');
     if ($q) {
         $query->setQuery($q);
     }
+
+    if ($s) {
+        if (! $st OR $st == 'asc') {
+            $query->addSort($s, $query::SORT_ASC);
+            $st = 'asc';
+        } else {
+            $query->addSort($s, $query::SORT_DESC);
+        }
+    }
     $data['result'] = $client->execute($query);
     $data['q'] = $q;
+    $data['s'] = $s;
+    $data['st'] = $st;
 
     $app->render('simple_search.html.twig', $data);
 });
